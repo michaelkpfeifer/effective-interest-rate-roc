@@ -74,6 +74,6 @@ expect
 
     when result is
         Ok root ->
-            1.0 - 1.0e-8 <= root && root <= 0.0 + 1.0e-8
+            1.0 - 1.0e-8 <= root && root <= 1.0 + 1.0e-8
         Err _ ->
             Bool.false
