@@ -27,8 +27,6 @@ expect
 
     paymentStream = Min2ItemsList latest someOther [earliest]
 
-    payment = earliestPayment paymentStream
-
     equal (earliestPayment paymentStream) earliest
 
 equal : Payment, Payment -> Bool
