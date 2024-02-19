@@ -1,12 +1,12 @@
 # The Date interface is based on the Elm Date module by Justin Nimbs,
 # https://github.com/justinmimbs/date/tree/4.0.1.
-#
-# Note that this file only implements the parts that are needed for
-# the computation of external interest rates.
+
+# Note that so far this file only implements the parts that are needed
+# for the computation of external interest rates.
 
 interface Date
     exposes [
-        RD,
+        Date,
         compare,
         fromCalendarDate,
     ]
@@ -15,7 +15,9 @@ interface Date
 
 Month : [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
 
-RD : [RD I64]
+RataDie : I64
+
+Date : [RD RataDie]
 
 clamp : I64, I64, I64 -> I64
 clamp = \low, high, number ->
@@ -186,13 +188,13 @@ expect
     ==
     List.sum ((List.range { start: At 1, end: At 2000 }) |> List.map (\year -> daysInYear year))
 
-fromCalendarDate : I64, Month, I64 -> RD
+fromCalendarDate : I64, Month, I64 -> Date
 fromCalendarDate = \year, month, day ->
     daysBeforeYear year + daysBeforeMonth year month + clamp 1 (daysInMonth year month) day |> RD
 
 expect fromCalendarDate 2022 Sep 19 == RD 738417
 
-compare : RD, RD -> [LT, EQ, GT]
+compare : Date, Date -> [LT, EQ, GT]
 compare = \RD d1, RD d2 ->
     if d1 < d2 then
         LT

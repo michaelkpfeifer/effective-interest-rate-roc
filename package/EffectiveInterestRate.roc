@@ -12,7 +12,7 @@ interface EffectiveInterestRate
 # alignment of Dec values on x86 64 bit machines, compare
 # https://github.com/roc-lang/roc/issues/6343.
 
-Payment : { amount : F64, date : Date.RD }
+Payment : { amount : F64, date : Date.Date }
 
 PaymentStream : Min2ItemsList.Min2ItemsList Payment
 
