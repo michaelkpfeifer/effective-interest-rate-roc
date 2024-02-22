@@ -6,6 +6,7 @@
 
 interface Date
     exposes [
+        Month,
         Date,
         compare,
         fromCalendarDate,
@@ -191,14 +192,34 @@ expect
     ==
     List.sum ((List.range { start: At 1, end: At 2000 }) |> List.map (\year -> daysInYear year))
 
+# DEVELOPMENT. This is where I should continue working.
+# We will need the ordinalDay component.
+
+# toOrdinalDate : Date -> { year: I64, ordinalDay: I64 }
+# toOrdinalDate = \(RD rd) =
+
 ## Create a date from a calendar date by providing a year, a month,
 ## and a day of the month. Out-of-range day values will be clamped.
 fromCalendarDate : I64, Month, I64 -> Date
 fromCalendarDate = \year, month, day ->
     daysBeforeYear year + daysBeforeMonth year month + clamp 1 (daysInMonth year month) day |> RD
 
-expect fromCalendarDate 2022 Sep 19 == RD 738417
+expect
+    rd = fromCalendarDate 1 Jan 1
+    rd == RD 1
 
+expect
+    rd = fromCalendarDate 2022 Sep 19
+    rd == RD 738417
+
+expect
+    rd1 = fromCalendarDate 2024 Feb 29
+    rd2 = fromCalendarDate 2024 Feb 30
+    rd1 == rd2
+
+## Compare two dates. Returns `LT` if the first date is before the
+## second date. Returns `GT` is the first data is after the second
+## date. Returns `EQ` if the two dates are equal.
 compare : Date, Date -> [LT, EQ, GT]
 compare = \RD d1, RD d2 ->
     if d1 < d2 then
