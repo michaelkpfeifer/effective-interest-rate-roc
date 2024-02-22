@@ -51,3 +51,21 @@ expect
 
     paymentEqual p1 p2 |> Bool.not
 
+isLeapYear : I64 -> Bool
+isLeapYear = \year ->
+    year % 4 == 0 && year % 100 != 0 || year % 400 == 0
+
+expect isLeapYear 1900 == Bool.false
+
+expect isLeapYear 1996 == Bool.true
+
+expect isLeapYear 2000 == Bool.true
+
+expect isLeapYear 2001 == Bool.false
+
+expect isLeapYear 2002 == Bool.false
+
+expect isLeapYear 2003 == Bool.false
+
+expect isLeapYear 2004 == Bool.true
+
