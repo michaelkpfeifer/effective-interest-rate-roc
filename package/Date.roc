@@ -13,10 +13,13 @@ interface Date
     imports [
     ]
 
+## The Month type enumerates all twelve months using standard three
+## letter abbreviations.
 Month : [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
 
 RataDie : I64
 
+## The `Date` type represents a date.
 Date : [RD RataDie]
 
 clamp : I64, I64, I64 -> I64
@@ -188,6 +191,8 @@ expect
     ==
     List.sum ((List.range { start: At 1, end: At 2000 }) |> List.map (\year -> daysInYear year))
 
+## Create a date from a calendar date by providing a year, a month,
+## and a day of the month. Out-of-range day values will be clamped.
 fromCalendarDate : I64, Month, I64 -> Date
 fromCalendarDate = \year, month, day ->
     daysBeforeYear year + daysBeforeMonth year month + clamp 1 (daysInMonth year month) day |> RD
