@@ -27,8 +27,27 @@ expect
 
     paymentStream = Min2ItemsList latest someOther [earliest]
 
-    equal (earliestPayment paymentStream) earliest
+    paymentEqual (earliestPayment paymentStream) earliest
 
-equal : Payment, Payment -> Bool
-equal = \{ amount: amount1, date: date1 }, { amount: amount2, date: date2 } ->
+paymentEqual : Payment, Payment -> Bool
+paymentEqual = \{ amount: amount1, date: date1 }, { amount: amount2, date: date2 } ->
     Num.isZero (amount1 - amount2) && date1 == date2
+
+expect
+    p1 = { amount: 1000, date: Date.fromCalendarDate 2020 Jan 1 }
+    p2 = { amount: 1000, date: Date.fromCalendarDate 2020 Jan 1 }
+
+    paymentEqual p1 p2
+
+expect
+    p1 = { amount: 1000, date: Date.fromCalendarDate 2020 Jan 1 }
+    p2 = { amount: 1001, date: Date.fromCalendarDate 2020 Jan 1 }
+
+    paymentEqual p1 p2 |> Bool.not
+
+expect
+    p1 = { amount: 0.1 + 0.2, date: Date.fromCalendarDate 2020 Jan 1 }
+    p2 = { amount: 0.3, date: Date.fromCalendarDate 2020 Jan 1 }
+
+    paymentEqual p1 p2 |> Bool.not
+
