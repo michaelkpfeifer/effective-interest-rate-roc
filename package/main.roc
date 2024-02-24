@@ -1,5 +1,5 @@
 package "Data"
     exposes [
-        Date,
+        EffectiveInterestRate,
     ]
     packages {}
