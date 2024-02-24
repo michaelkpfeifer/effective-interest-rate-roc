@@ -23,20 +23,6 @@ RataDie : I64
 ## The `Date` type represents a date.
 Date : [RD RataDie]
 
-clamp : I64, I64, I64 -> I64
-clamp = \low, high, number ->
-    if number <= low then
-        low
-    else if number >= high then
-        high
-    else
-        number
-
-expect clamp 1 10 -1 == 1
-
-expect clamp 1 10 5 == 5
-
-expect clamp 1 10 15 == 10
 
 floorDiv : I64, I64 -> I64
 floorDiv = \a, b ->
@@ -73,6 +59,21 @@ expect isLeapYear 2002 == Bool.false
 expect isLeapYear 2003 == Bool.false
 
 expect isLeapYear 2004 == Bool.true
+
+clamp : I64, I64, I64 -> I64
+clamp = \low, high, number ->
+    if number <= low then
+        low
+    else if number >= high then
+        high
+    else
+        number
+
+expect clamp 1 10 -1 == 1
+
+expect clamp 1 10 5 == 5
+
+expect clamp 1 10 15 == 10
 
 daysInMonth : I64, Month -> I64
 daysInMonth = \year, month ->
