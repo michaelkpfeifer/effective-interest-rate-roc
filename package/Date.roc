@@ -137,6 +137,20 @@ expect
     rd2 = fromCalendarDate 2024 Feb 30
     rd1 == rd2
 
+toOrdinalDate : Date -> { year : I64, ordinalDay : I64 }
+toOrdinalDate = \RD rd ->
+    y = year (RD rd)
+
+    { year: y, ordinalDay: rd - daysBeforeYear y }
+
+expect fromCalendarDate 2020 Jan 1 |> toOrdinalDate == { year: 2020, ordinalDay: 1 }
+
+expect fromCalendarDate 2020 Dec 31 |> toOrdinalDate == { year: 2020, ordinalDay: 366 }
+
+expect fromCalendarDate 2021 Jan 1 |> toOrdinalDate == { year: 2021, ordinalDay: 1 }
+
+expect fromCalendarDate 2021 Dec 31 |> toOrdinalDate == { year: 2021, ordinalDay: 365 }
+
 ## Compare two dates. Returns `LT` if the first date is before the
 ## second date. Returns `GT` is the first data is after the second
 ## date. Returns `EQ` if the two dates are equal.
