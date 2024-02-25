@@ -26,8 +26,8 @@ Date : [RD RataDie]
 
 
 isLeapYear : I64 -> Bool
-isLeapYear = \year ->
-    year % 4 == 0 && year % 100 != 0 || year % 400 == 0
+isLeapYear = \y ->
+    y % 4 == 0 && y % 100 != 0 || y % 400 == 0
 
 expect isLeapYear 1900 == Bool.false
 
@@ -44,8 +44,8 @@ expect isLeapYear 2003 == Bool.false
 expect isLeapYear 2004 == Bool.true
 
 daysInYear : I64 -> I64
-daysInYear = \year ->
-    if isLeapYear year then
+daysInYear = \y ->
+    if isLeapYear y then
         366
     else
         365
@@ -57,14 +57,14 @@ expect daysInYear 2000 == 366
 expect daysInYear 2001 == 365
 
 daysBeforeYear : I64 -> I64
-daysBeforeYear = \year ->
-    yearm1 =
-        year - 1
+daysBeforeYear = \y ->
+    ym1 =
+        y - 1
 
     leapYears =
-        floorDiv yearm1 4 - floorDiv yearm1 100 + floorDiv yearm1 400
+        floorDiv ym1 4 - floorDiv ym1 100 + floorDiv ym1 400
 
-    365 * yearm1 + leapYears
+    365 * ym1 + leapYears
 
 expect daysBeforeYear 1 == 0
 
@@ -79,18 +79,50 @@ expect daysBeforeYear 5 == 3 * 365 + 366
 expect
     daysBeforeYear 2000
     ==
-    List.sum ((List.range { start: At 1, end: At 1999 }) |> List.map (\year -> daysInYear year))
+    List.sum ((List.range { start: At 1, end: At 1999 }) |> List.map (\y -> daysInYear y))
 
 expect
     daysBeforeYear 2001
     ==
-    List.sum ((List.range { start: At 1, end: At 2000 }) |> List.map (\year -> daysInYear year))
+    List.sum ((List.range { start: At 1, end: At 2000 }) |> List.map (\y -> daysInYear y))
+
+year : Date -> I64
+year = \RD rd ->
+    (n400, r400) = divWithRemainder rd 146097
+
+    (n100, r100) = divWithRemainder r400 36524
+
+    (n4, r4) = divWithRemainder r100 1461
+
+    (n1, r1) = divWithRemainder r4 365
+
+    n =
+        if r1 == 0 then
+            0
+        else
+            1
+
+    n400 * 400 + n100 * 100 + n4 * 4 + n1 + n
+
+expect fromCalendarDate 2019 Dec 31 |> year == 2019
+
+expect fromCalendarDate 2020 Jan 1 |> year == 2020
+
+expect fromCalendarDate 2020 Dec 31 |> year == 2020
+
+expect fromCalendarDate 2021 Jan 01 |> year == 2021
+
+expect fromCalendarDate 2000 Jan 1 |> year == 2000
+
+expect fromCalendarDate 2000 Dec 31 |> year == 2000
+
+expect fromCalendarDate 2024 Feb 25 |> year == 2024
 
 ## Create a date from a calendar date by providing a year, a month,
 ## and a day of the month. Out-of-range day values will be clamped.
 fromCalendarDate : I64, Month, I64 -> Date
-fromCalendarDate = \year, month, day ->
-    daysBeforeYear year + daysBeforeMonth year month + clamp 1 (daysInMonth year month) day |> RD
+fromCalendarDate = \y, m, d ->
+    daysBeforeYear y + daysBeforeMonth y m + clamp 1 (daysInMonth y m) d |> RD
 
 expect
     rd = fromCalendarDate 1 Jan 1
@@ -141,11 +173,11 @@ expect clamp 1 10 5 == 5
 expect clamp 1 10 15 == 10
 
 daysInMonth : I64, Month -> I64
-daysInMonth = \year, month ->
-    when month is
+daysInMonth = \y, m ->
+    when m is
         Jan | Mar | May | Jul | Aug | Oct | Dec -> 31
         Feb ->
-            if isLeapYear year then
+            if isLeapYear y then
                 29
             else
                 28
@@ -161,14 +193,14 @@ expect daysInMonth 2022 Jan == 31
 expect daysInMonth 2022 Apr == 30
 
 daysBeforeMonth : I64, Month -> I64
-daysBeforeMonth = \year, month ->
+daysBeforeMonth = \y, m ->
     leapDays =
-        if isLeapYear year then
+        if isLeapYear y then
             1
         else
             0
 
-    when month is
+    when m is
         Jan ->
             0
 
