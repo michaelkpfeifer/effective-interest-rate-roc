@@ -151,6 +151,19 @@ expect fromCalendarDate 2021 Jan 1 |> toOrdinalDate == { year: 2021, ordinalDay:
 
 expect fromCalendarDate 2021 Dec 31 |> toOrdinalDate == { year: 2021, ordinalDay: 365 }
 
+ordinalDay : Date -> I64
+ordinalDay = \date ->
+    ordinalDate = toOrdinalDate date
+    ordinalDate.ordinalDay
+
+expect fromCalendarDate 2020 Jan 1 |> ordinalDay == 1
+
+expect fromCalendarDate 2020 Dec 31 |> ordinalDay == 366
+
+expect fromCalendarDate 2021 Jan 1 |> ordinalDay == 1
+
+expect fromCalendarDate 2021 Dec 31 |> ordinalDay == 365
+
 ## Compare two dates. Returns `LT` if the first date is before the
 ## second date. Returns `GT` is the first data is after the second
 ## date. Returns `EQ` if the two dates are equal.
