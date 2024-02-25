@@ -43,6 +43,19 @@ expect isLeapYear 2003 == Bool.false
 
 expect isLeapYear 2004 == Bool.true
 
+daysInYear : I64 -> I64
+daysInYear = \year ->
+    if isLeapYear year then
+        366
+    else
+        365
+
+expect daysInYear 1900 == 365
+
+expect daysInYear 2000 == 366
+
+expect daysInYear 2001 == 365
+
 daysBeforeYear : I64 -> I64
 daysBeforeYear = \year ->
     yearm1 =
@@ -241,15 +254,4 @@ expect divWithRemainder -999 400 == (-3, 201)
 expect divWithRemainder 0 400 == (0, 0)
 
 expect divWithRemainder 1001 400 == (2, 201)
-daysInYear : I64 -> I64
-daysInYear = \year ->
-    if isLeapYear year then
-        366
-    else
-        365
 
-expect daysInYear 1900 == 365
-
-expect daysInYear 2000 == 366
-
-expect daysInYear 2001 == 365
