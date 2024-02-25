@@ -43,6 +43,36 @@ expect isLeapYear 2003 == Bool.false
 
 expect isLeapYear 2004 == Bool.true
 
+daysBeforeYear : I64 -> I64
+daysBeforeYear = \year ->
+    yearm1 =
+        year - 1
+
+    leapYears =
+        floorDiv yearm1 4 - floorDiv yearm1 100 + floorDiv yearm1 400
+
+    365 * yearm1 + leapYears
+
+expect daysBeforeYear 1 == 0
+
+expect daysBeforeYear 2 == 365
+
+expect daysBeforeYear 3 == 2 * 365
+
+expect daysBeforeYear 4 == 3 * 365
+
+expect daysBeforeYear 5 == 3 * 365 + 366
+
+expect
+    daysBeforeYear 2000
+    ==
+    List.sum ((List.range { start: At 1, end: At 1999 }) |> List.map (\year -> daysInYear year))
+
+expect
+    daysBeforeYear 2001
+    ==
+    List.sum ((List.range { start: At 1, end: At 2000 }) |> List.map (\year -> daysInYear year))
+
 ## Compare two dates. Returns `LT` if the first date is before the
 ## second date. Returns `GT` is the first data is after the second
 ## date. Returns `EQ` if the two dates are equal.
@@ -204,36 +234,6 @@ expect daysInYear 1900 == 365
 expect daysInYear 2000 == 366
 
 expect daysInYear 2001 == 365
-
-daysBeforeYear : I64 -> I64
-daysBeforeYear = \year ->
-    yearm1 =
-        year - 1
-
-    leapYears =
-        floorDiv yearm1 4 - floorDiv yearm1 100 + floorDiv yearm1 400
-
-    365 * yearm1 + leapYears
-
-expect daysBeforeYear 1 == 0
-
-expect daysBeforeYear 2 == 365
-
-expect daysBeforeYear 3 == 2 * 365
-
-expect daysBeforeYear 4 == 3 * 365
-
-expect daysBeforeYear 5 == 3 * 365 + 366
-
-expect
-    daysBeforeYear 2000
-    ==
-    List.sum ((List.range { start: At 1, end: At 1999 }) |> List.map (\year -> daysInYear year))
-
-expect
-    daysBeforeYear 2001
-    ==
-    List.sum ((List.range { start: At 1, end: At 2000 }) |> List.map (\year -> daysInYear year))
 
 # DEVELOPMENT. This is where I should continue working.
 # We will need the ordinalDay component.
