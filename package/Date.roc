@@ -151,6 +151,27 @@ expect floorDiv -999 400 == -3
 expect floorDiv 0 400 == 0
 
 expect floorDiv 1001 400 == 2
+
+divWithRemainder : I64, I64 -> (I64, I64)
+divWithRemainder = \a, b ->
+    div = floorDiv a b
+    rem = Num.rem a b
+    if rem < 0 then
+        (div, rem + b)
+    else
+        (div, rem)
+
+expect divWithRemainder 3 4 == (0, 3)
+
+expect divWithRemainder -1 4 == (-1, 3)
+
+expect divWithRemainder 99 100 == (0, 99)
+
+expect divWithRemainder -999 400 == (-3, 201)
+
+expect divWithRemainder 0 400 == (0, 0)
+
+expect divWithRemainder 1001 400 == (2, 201)
 daysInYear : I64 -> I64
 daysInYear = \year ->
     if isLeapYear year then
