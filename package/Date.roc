@@ -24,23 +24,6 @@ RataDie : I64
 Date : [RD RataDie]
 
 
-floorDiv : I64, I64 -> I64
-floorDiv = \a, b ->
-    Num.floor (Num.toF64 a / Num.toF64 b)
-
-expect floorDiv 3 4 == 0
-
-expect floorDiv -1 4 == -1
-
-expect floorDiv 99 100 == 0
-
-expect floorDiv 100 100 == 1
-
-expect floorDiv -999 400 == -3
-
-expect floorDiv 0 400 == 0
-
-expect floorDiv 1001 400 == 2
 
 isLeapYear : I64 -> Bool
 isLeapYear = \year ->
@@ -150,6 +133,24 @@ expect daysBeforeMonth 2023 Dec == 334
 
 expect daysBeforeMonth 2024 Dec == 335
 
+
+floorDiv : I64, I64 -> I64
+floorDiv = \a, b ->
+    Num.floor (Num.toF64 a / Num.toF64 b)
+
+expect floorDiv 3 4 == 0
+
+expect floorDiv -1 4 == -1
+
+expect floorDiv 99 100 == 0
+
+expect floorDiv 100 100 == 1
+
+expect floorDiv -999 400 == -3
+
+expect floorDiv 0 400 == 0
+
+expect floorDiv 1001 400 == 2
 daysInYear : I64 -> I64
 daysInYear = \year ->
     if isLeapYear year then
