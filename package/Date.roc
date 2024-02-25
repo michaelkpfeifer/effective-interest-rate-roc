@@ -43,6 +43,26 @@ expect isLeapYear 2003 == Bool.false
 
 expect isLeapYear 2004 == Bool.true
 
+## Compare two dates. Returns `LT` if the first date is before the
+## second date. Returns `GT` is the first data is after the second
+## date. Returns `EQ` if the two dates are equal.
+compare : Date, Date -> [LT, EQ, GT]
+compare = \RD d1, RD d2 ->
+    if d1 < d2 then
+        LT
+    else if d1 == d2 then
+        EQ
+    else
+        GT
+
+expect compare (RD 999) (RD 1000) == LT
+
+expect compare (RD 1000) (RD 1000) == EQ
+
+expect compare (RD 1000) (RD 999) == GT
+
+expect compare (fromCalendarDate 2023 Jan 1) (fromCalendarDate 2024 Jan 1) == LT
+
 clamp : I64, I64, I64 -> I64
 clamp = \low, high, number ->
     if number <= low then
@@ -240,22 +260,3 @@ expect
     rd2 = fromCalendarDate 2024 Feb 30
     rd1 == rd2
 
-## Compare two dates. Returns `LT` if the first date is before the
-## second date. Returns `GT` is the first data is after the second
-## date. Returns `EQ` if the two dates are equal.
-compare : Date, Date -> [LT, EQ, GT]
-compare = \RD d1, RD d2 ->
-    if d1 < d2 then
-        LT
-    else if d1 == d2 then
-        EQ
-    else
-        GT
-
-expect compare (RD 999) (RD 1000) == LT
-
-expect compare (RD 1000) (RD 1000) == EQ
-
-expect compare (RD 1000) (RD 999) == GT
-
-expect compare (fromCalendarDate 2023 Jan 1) (fromCalendarDate 2024 Jan 1) == LT
