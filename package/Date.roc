@@ -253,10 +253,3 @@ expect daysInYear 1900 == 365
 expect daysInYear 2000 == 366
 
 expect daysInYear 2001 == 365
-
-# DEVELOPMENT. This is where I should continue working.
-# We will need the ordinalDay component.
-
-# toOrdinalDate : Date -> { year: I64, ordinalDay: I64 }
-# toOrdinalDate = \(RD rd) =
-
