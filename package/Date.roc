@@ -6,10 +6,11 @@
 
 interface Date
     exposes [
-        Month,
         Date,
+        Month,
         compare,
         fromCalendarDate,
+        ordinalDay,
     ]
     imports [
     ]
@@ -151,6 +152,7 @@ expect fromCalendarDate 2021 Jan 1 |> toOrdinalDate == { year: 2021, ordinalDay:
 
 expect fromCalendarDate 2021 Dec 31 |> toOrdinalDate == { year: 2021, ordinalDay: 365 }
 
+## The day of the year (1-366).
 ordinalDay : Date -> I64
 ordinalDay = \date ->
     ordinalDate = toOrdinalDate date
