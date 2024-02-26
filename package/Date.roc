@@ -11,6 +11,7 @@ interface Date
         compare,
         fromCalendarDate,
         ordinalDay,
+        year,
     ]
     imports [
     ]
@@ -87,6 +88,7 @@ expect
     ==
     List.sum ((List.range { start: At 1, end: At 2000 }) |> List.map (\y -> daysInYear y))
 
+## The calendar year
 year : Date -> I64
 year = \RD rd ->
     (n400, r400) = divWithRemainder rd 146097
