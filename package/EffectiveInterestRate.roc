@@ -89,3 +89,15 @@ expect isLeapYear 2003 == Bool.false
 
 expect isLeapYear 2004 == Bool.true
 
+isInLeapYear : Date.Date -> Bool
+isInLeapYear = \date ->
+    Date.year date |> isLeapYear
+
+expect
+    date = Date.fromCalendarDate 2003 Jun 20
+    isInLeapYear date == Bool.false
+
+expect
+    date = Date.fromCalendarDate 2004 Jun 20
+    isInLeapYear date == Bool.true
+
