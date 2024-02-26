@@ -51,6 +51,26 @@ expect
 
     paymentEqual p1 p2 |> Bool.not
 
+dayInYear : Date.Date -> I64
+dayInYear = \date ->
+    Date.ordinalDay date - 1
+
+expect
+    date = Date.fromCalendarDate 2003 Jan 1
+    dayInYear date == 0
+
+expect
+    date = Date.fromCalendarDate 2004 Jan 1
+    dayInYear date == 0
+
+expect
+    date = Date.fromCalendarDate 2003 Dec 31
+    dayInYear date == 364
+
+expect
+    date = Date.fromCalendarDate 2004 Dec 31
+    dayInYear date == 365
+
 isLeapYear : I64 -> Bool
 isLeapYear = \year ->
     year % 4 == 0 && year % 100 != 0 || year % 400 == 0
