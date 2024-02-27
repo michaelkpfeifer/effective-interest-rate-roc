@@ -101,3 +101,22 @@ expect
     date = Date.fromCalendarDate 2004 Jun 20
     isInLeapYear date == Bool.true
 
+normalizedDayInYear : Date.Date -> F64
+normalizedDayInYear = \date ->
+    if isInLeapYear date then
+        Num.toF64 (dayInYear date) / 366
+    else
+        Num.toF64 (dayInYear date) / 365
+
+expect
+    date = Date.fromCalendarDate 2003 Jan 1
+    Num.isApproxEq (normalizedDayInYear date) 0.0 { atol: 1e-8 }
+
+expect
+    date = Date.fromCalendarDate 2003 Dec 31
+    Num.isApproxEq (normalizedDayInYear date) (364.0 / 365.0) { atol: 1e-8 }
+
+expect
+    date = Date.fromCalendarDate 2004 Dec 31
+    Num.isApproxEq (normalizedDayInYear date) (365.0 / 366.0) { atol: 1e-8 }
+
