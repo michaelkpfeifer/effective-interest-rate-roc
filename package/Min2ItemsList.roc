@@ -1,11 +1,13 @@
 interface Min2ItemsList
     exposes [
         Min2ItemsList,
+        map,
         minimumWith,
     ]
     imports [
     ]
 
+## A list that contains at least 2 items
 Min2ItemsList a : [Min2ItemsList a a (List a)]
 
 first : Min2ItemsList a -> a
@@ -32,6 +34,7 @@ toList = \Min2ItemsList fst snd rst ->
 
 expect toList (Min2ItemsList 1 2 [3]) == [1, 2, 3]
 
+## Map a function over a Min2ItemsList
 map : Min2ItemsList a, (a -> b) -> Min2ItemsList b
 map = \Min2ItemsList fst snd rst, fn ->
     Min2ItemsList (fn fst) (fn snd) (List.map rst fn)
@@ -44,6 +47,8 @@ walk = \list, state, fn ->
 
 expect walk (Min2ItemsList 1 2 [3]) 0 Num.add == 6
 
+## Determine the minimum item of a Min2ItemsList according to a
+## specified comparison function
 minimumWith : Min2ItemsList a, (a, a -> [LT, EQ, GT]) -> a
 minimumWith = \Min2ItemsList fst snd rst, cmpFn ->
     minFn = \x, y ->
