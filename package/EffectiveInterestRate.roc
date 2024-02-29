@@ -14,6 +14,8 @@ interface EffectiveInterestRate
 
 Payment : { amount : F64, date : Date.Date }
 
+NormalizedPayment : { amount : F64, offset : F64 }
+
 PaymentStream : Min2ItemsList.Min2ItemsList Payment
 
 earliestPayment : PaymentStream -> Payment
@@ -120,6 +122,49 @@ expect
     date = Date.fromCalendarDate 2004 Dec 31
     almostEqual (normalizedDayInYear date) (365.0 / 366.0)
 
+toNormalizedPayment : Payment, Payment -> NormalizedPayment
+toNormalizedPayment = \referencePayment, payment -> {
+    amount: payment.amount,
+    offset: Num.toF64 (Date.year payment.date)
+    - Num.toF64 (Date.year referencePayment.date)
+    + normalizedDayInYear payment.date
+    - normalizedDayInYear referencePayment.date,
+}
+
+expect
+    referencePayment = { amount: 1000, date: Date.fromCalendarDate 2020 Jan 1 }
+    payment = { amount: 1000, date: Date.fromCalendarDate 2020 Jan 1 }
+    almostEqual (toNormalizedPayment referencePayment payment).offset 0.0
+
+expect
+    referencePayment = { amount: 1000, date: Date.fromCalendarDate 2021 Jan 1 }
+    payment = { amount: 1000, date: Date.fromCalendarDate 2021 Dec 31 }
+    almostEqual (toNormalizedPayment referencePayment payment).offset (364.0 / 365.0)
+
+expect
+    referencePayment = { amount: 1000, date: Date.fromCalendarDate 2020 Jan 1 }
+    payment = { amount: 1000, date: Date.fromCalendarDate 2020 Dec 31 }
+    almostEqual (toNormalizedPayment referencePayment payment).offset (365.0 / 366.0)
+
+expect
+    referencePayment = { amount: 1000, date: Date.fromCalendarDate 2020 Jan 1 }
+    payment = { amount: 1000, date: Date.fromCalendarDate 2020 Dec 31 }
+    almostEqual (toNormalizedPayment referencePayment payment).offset (365.0 / 366.0)
+
+expect
+    referencePayment = { amount: 1000, date: Date.fromCalendarDate 2020 Jan 1 }
+    payment = { amount: 1000, date: Date.fromCalendarDate 2021 Jan 1 }
+    almostEqual (toNormalizedPayment referencePayment payment).offset 1.0
+
+expect
+    referencePayment = { amount: 1000, date: Date.fromCalendarDate 2020 Dec 31 }
+    payment = { amount: 1000, date: Date.fromCalendarDate 2021 Jan 2 }
+    almostEqual (toNormalizedPayment referencePayment payment).offset ((1.0 / 365.0) + (1.0 / 366.0))
+
+expect
+    referencePayment = { amount: 1000, date: Date.fromCalendarDate 2020 Feb 1 }
+    payment = { amount: 1000, date: Date.fromCalendarDate 2020 Feb 29 }
+    almostEqual (toNormalizedPayment referencePayment payment).offset (28.0 / 366.0)
 
 almostEqual : F64, F64 -> Bool
 almostEqual = \a, b ->
