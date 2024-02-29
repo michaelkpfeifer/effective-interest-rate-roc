@@ -110,13 +110,17 @@ normalizedDayInYear = \date ->
 
 expect
     date = Date.fromCalendarDate 2003 Jan 1
-    Num.isApproxEq (normalizedDayInYear date) 0.0 { atol: 1e-8 }
+    almostEqual (normalizedDayInYear date) 0.0
 
 expect
     date = Date.fromCalendarDate 2003 Dec 31
-    Num.isApproxEq (normalizedDayInYear date) (364.0 / 365.0) { atol: 1e-8 }
+    almostEqual (normalizedDayInYear date) (364.0 / 365.0)
 
 expect
     date = Date.fromCalendarDate 2004 Dec 31
-    Num.isApproxEq (normalizedDayInYear date) (365.0 / 366.0) { atol: 1e-8 }
+    almostEqual (normalizedDayInYear date) (365.0 / 366.0)
 
+
+almostEqual : F64, F64 -> Bool
+almostEqual = \a, b ->
+    Num.absDiff a b < 1e-8
