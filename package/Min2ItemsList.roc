@@ -1,8 +1,11 @@
 interface Min2ItemsList
     exposes [
         Min2ItemsList,
+        first,
         map,
         minimumWith,
+        rest,
+        second,
     ]
     imports [
     ]
@@ -10,18 +13,21 @@ interface Min2ItemsList
 ## A list that contains at least 2 items
 Min2ItemsList a : [Min2ItemsList a a (List a)]
 
+## The first item stored in a Min2ItemsList
 first : Min2ItemsList a -> a
 first = \Min2ItemsList fst _ _ ->
     fst
 
 expect first (Min2ItemsList 1 2 [3]) == 1
 
+## The second item stored in a Min2ItemsList
 second : Min2ItemsList a -> a
 second = \Min2ItemsList _ snd _ ->
     snd
 
 expect second (Min2ItemsList 1 2 [3]) == 2
 
+## The third and consecutive items stored in a Min2ItemsList
 rest : Min2ItemsList a -> List a
 rest = \Min2ItemsList _ _ rst ->
     rst
