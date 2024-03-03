@@ -192,6 +192,37 @@ expect
         _ ->
             Bool.false
 
+netPresentValue : NormalizedPaymentStream -> (F64 -> F64)
+netPresentValue = \normalizedPaymentStream ->
+    \x ->
+        Min2ItemsList.walk
+            normalizedPaymentStream
+            0.0
+            (\sum, np -> sum + np.amount * (1 + x) ^ -np.offset)
+
+expect
+    payment1 = { amount: -1000, date: Date.fromCalendarDate 2019 Jan 1 }
+    payment2 = { amount: 1600, date: Date.fromCalendarDate 2019 Apr 4 }
+    payment3 = { amount: -2000, date: Date.fromCalendarDate 2019 Jul 7 }
+    payment4 = { amount: 1600, date: Date.fromCalendarDate 2019 Oct 10 }
+    normalizedPaymentStream =
+        Min2ItemsList payment1 payment2 [payment3, payment4]
+        |> EffectiveInterestRate.toNormalizedPaymentStream
+    npv = netPresentValue normalizedPaymentStream
+
+    almostEqual (npv 0.0) 200.0
+
+expect
+    payment1 = { amount: -1000, date: Date.fromCalendarDate 2019 Jan 1 }
+    payment2 = { amount: 500, date: Date.fromCalendarDate 2020 Jan 1 }
+    payment3 = { amount: 500, date: Date.fromCalendarDate 2021 Jan 1 }
+    normalizedPaymentStream =
+        Min2ItemsList payment1 payment2 [payment3]
+        |> EffectiveInterestRate.toNormalizedPaymentStream
+    npv = netPresentValue normalizedPaymentStream
+
+    almostEqual (npv 1.0) -625.0
+
 almostEqual : F64, F64 -> Bool
 almostEqual = \a, b ->
     Num.absDiff a b < 1e-8
