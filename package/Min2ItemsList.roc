@@ -6,6 +6,7 @@ interface Min2ItemsList
         minimumWith,
         rest,
         second,
+        walk,
     ]
     imports [
     ]
@@ -47,6 +48,7 @@ map = \Min2ItemsList fst snd rst, fn ->
 
 expect map (Min2ItemsList 1 2 [3]) (\n -> n * n) == Min2ItemsList 1 4 [9]
 
+## Fold over a Min2ItemsList using the given function
 walk : Min2ItemsList a, b, (b, a -> b) -> b
 walk = \list, state, fn ->
     List.walk (toList list) state fn
