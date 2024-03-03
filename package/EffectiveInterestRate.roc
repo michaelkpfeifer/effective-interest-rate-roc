@@ -223,6 +223,26 @@ expect
 
     almostEqual (npv 1.0) -625.0
 
+netPresentValueDerivative : NormalizedPaymentStream -> (F64 -> F64)
+netPresentValueDerivative = \normalizesPaymentStream ->
+    \x ->
+        Min2ItemsList.walk
+            normalizesPaymentStream
+            0.0
+            (\sum, np -> sum + np.amount * -np.offset * (1 + x) ^ (-np.offset - 1))
+
+expect
+    payment1 = { amount: -1000, date: Date.fromCalendarDate 2019 Jan 1 }
+    payment2 = { amount: 500, date: Date.fromCalendarDate 2020 Jan 1 }
+    payment3 = { amount: 500, date: Date.fromCalendarDate 2021 Jan 1 }
+    normalizedPaymentStream : EffectiveInterestRate.NormalizedPaymentStream
+    normalizedPaymentStream =
+        Min2ItemsList payment1 payment2 [payment3]
+        |> EffectiveInterestRate.toNormalizedPaymentStream
+    npvp = EffectiveInterestRate.netPresentValueDerivative normalizedPaymentStream
+
+    almostEqual (npvp 1.0) -250.0
+
 almostEqual : F64, F64 -> Bool
 almostEqual = \a, b ->
     Num.absDiff a b < 1e-8
