@@ -18,6 +18,8 @@ NormalizedPayment : { amount : F64, offset : F64 }
 
 PaymentStream : Min2ItemsList.Min2ItemsList Payment
 
+NormalizedPaymentStream : Min2ItemsList.Min2ItemsList NormalizedPayment
+
 earliestPayment : PaymentStream -> Payment
 earliestPayment = \paymentStream ->
     Min2ItemsList.minimumWith paymentStream (\p1, p2 -> Date.compare p1.date p2.date)
@@ -165,6 +167,30 @@ expect
     referencePayment = { amount: 1000, date: Date.fromCalendarDate 2020 Feb 1 }
     payment = { amount: 1000, date: Date.fromCalendarDate 2020 Feb 29 }
     almostEqual (toNormalizedPayment referencePayment payment).offset (28.0 / 366.0)
+
+toNormalizedPaymentStream : PaymentStream -> NormalizedPaymentStream
+toNormalizedPaymentStream = \paymentStream ->
+    referencePayment = earliestPayment paymentStream
+    Min2ItemsList.map paymentStream (\payment -> toNormalizedPayment referencePayment payment)
+
+expect
+    paymentJan01 = { amount: -1000, date: Date.fromCalendarDate 2020 Jan 1 }
+    paymentJan02 = { amount: 500, date: Date.fromCalendarDate 2020 Jan 2 }
+    paymentDec31 = { amount: 500, date: Date.fromCalendarDate 2020 Dec 31 }
+    normalizedPaymentStream =
+        Min2ItemsList paymentJan01 paymentJan02 [paymentDec31]
+        |> EffectiveInterestRate.toNormalizedPaymentStream
+
+    almostEqual (Min2ItemsList.first normalizedPaymentStream).offset 0.0
+    &&
+    almostEqual (Min2ItemsList.second normalizedPaymentStream).offset (1.0 / 366.0)
+    &&
+    when Min2ItemsList.rest normalizedPaymentStream is
+        [normalizedPaymnt] ->
+            almostEqual normalizedPaymnt.offset (365.0 / 366.0)
+
+        _ ->
+            Bool.false
 
 almostEqual : F64, F64 -> Bool
 almostEqual = \a, b ->
