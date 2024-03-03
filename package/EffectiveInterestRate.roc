@@ -179,7 +179,7 @@ expect
     paymentDec31 = { amount: 500, date: Date.fromCalendarDate 2020 Dec 31 }
     normalizedPaymentStream =
         Min2ItemsList paymentJan01 paymentJan02 [paymentDec31]
-        |> EffectiveInterestRate.toNormalizedPaymentStream
+        |> toNormalizedPaymentStream
 
     almostEqual (Min2ItemsList.first normalizedPaymentStream).offset 0.0
     &&
@@ -207,7 +207,7 @@ expect
     payment4 = { amount: 1600, date: Date.fromCalendarDate 2019 Oct 10 }
     normalizedPaymentStream =
         Min2ItemsList payment1 payment2 [payment3, payment4]
-        |> EffectiveInterestRate.toNormalizedPaymentStream
+        |> toNormalizedPaymentStream
     npv = netPresentValue normalizedPaymentStream
 
     almostEqual (npv 0.0) 200.0
@@ -218,7 +218,7 @@ expect
     payment3 = { amount: 500, date: Date.fromCalendarDate 2021 Jan 1 }
     normalizedPaymentStream =
         Min2ItemsList payment1 payment2 [payment3]
-        |> EffectiveInterestRate.toNormalizedPaymentStream
+        |> toNormalizedPaymentStream
     npv = netPresentValue normalizedPaymentStream
 
     almostEqual (npv 1.0) -625.0
@@ -235,11 +235,11 @@ expect
     payment1 = { amount: -1000, date: Date.fromCalendarDate 2019 Jan 1 }
     payment2 = { amount: 500, date: Date.fromCalendarDate 2020 Jan 1 }
     payment3 = { amount: 500, date: Date.fromCalendarDate 2021 Jan 1 }
-    normalizedPaymentStream : EffectiveInterestRate.NormalizedPaymentStream
+    normalizedPaymentStream : NormalizedPaymentStream
     normalizedPaymentStream =
         Min2ItemsList payment1 payment2 [payment3]
-        |> EffectiveInterestRate.toNormalizedPaymentStream
-    npvp = EffectiveInterestRate.netPresentValueDerivative normalizedPaymentStream
+        |> toNormalizedPaymentStream
+    npvp = netPresentValueDerivative normalizedPaymentStream
 
     almostEqual (npvp 1.0) -250.0
 
