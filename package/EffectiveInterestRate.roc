@@ -4,6 +4,7 @@ interface EffectiveInterestRate
     imports [
         Date,
         Min2ItemsList,
+        NewtonIteration,
     ]
 
 # Using F64 for the amount field in Payment type values should be a
@@ -235,13 +236,92 @@ expect
     payment1 = { amount: -1000, date: Date.fromCalendarDate 2019 Jan 1 }
     payment2 = { amount: 500, date: Date.fromCalendarDate 2020 Jan 1 }
     payment3 = { amount: 500, date: Date.fromCalendarDate 2021 Jan 1 }
-    normalizedPaymentStream : NormalizedPaymentStream
     normalizedPaymentStream =
         Min2ItemsList payment1 payment2 [payment3]
         |> toNormalizedPaymentStream
     npvp = netPresentValueDerivative normalizedPaymentStream
 
     almostEqual (npvp 1.0) -250.0
+
+effectiveInterestRate : PaymentStream -> Result F64 Str
+effectiveInterestRate = \paymentStream ->
+    normalizedPaymentStream = toNormalizedPaymentStream paymentStream
+    startValue = -0.75
+    maxIterationDifference = 1e-8
+    maxIterations = 64
+
+    NewtonIteration.iterate
+        (netPresentValue normalizedPaymentStream)
+        (netPresentValueDerivative normalizedPaymentStream)
+        startValue
+        maxIterationDifference
+        maxIterations
+
+expect
+    payment1 = { amount: 2000, date: Date.fromCalendarDate 2013 Jun 1 }
+    payment2 = { amount: -1000, date: Date.fromCalendarDate 2014 Jun 1 }
+    payment3 = { amount: -1000, date: Date.fromCalendarDate 2015 Jun 1 }
+    paymentStream = Min2ItemsList payment1 payment2 [payment3]
+
+    when EffectiveInterestRate.effectiveInterestRate paymentStream is
+        Ok interestRate ->
+            almostEqual interestRate 0.0
+
+        Err _ ->
+            Bool.false
+
+expect
+    payment1 = { amount: 2000, date: Date.fromCalendarDate 2013 Jun 1 }
+    payment2 = { amount: -1000, date: Date.fromCalendarDate 2014 Jun 1 }
+    payment3 = { amount: -1000, date: Date.fromCalendarDate 2015 Jun 1 }
+    payment4 = { amount: -100, date: Date.fromCalendarDate 2015 Jul 1 }
+    paymentStream = Min2ItemsList payment1 payment2 [payment3, payment4]
+
+    when EffectiveInterestRate.effectiveInterestRate paymentStream is
+        Ok interestRate ->
+            interestRate > 0.0
+
+        Err _ ->
+            Bool.false
+
+expect
+    payment1 = { amount: -1065.25, date: Date.fromCalendarDate 2011 Apr 21 }
+    payment2 = { amount: 130.69, date: Date.fromCalendarDate 2014 May 23 }
+    paymentStream = Min2ItemsList payment1 payment2 []
+
+    when EffectiveInterestRate.effectiveInterestRate paymentStream is
+        Ok interestRate ->
+            Num.absDiff interestRate -0.4931 < 1e-4
+
+        Err _ ->
+            Bool.false
+
+expect
+    listProduct : List a, List b -> List (a, b)
+    listProduct = \la, lb ->
+        List.map la (\va -> List.map lb (\vb -> (va, vb)))
+        |> List.join
+
+    years = List.range { start: At 2015, end: At 2034 }
+    months = [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+    paymentStream =
+        Min2ItemsList
+            { amount: 240000, date: Date.fromCalendarDate 2015 Jan 1 }
+            { amount: 0, date: Date.fromCalendarDate 2015 Jan 1 }
+            (
+                listProduct years months
+                |> List.map
+                    (\(year, month) ->
+                        { amount: -1200, date: Date.fromCalendarDate year month 1 }
+                    )
+            )
+
+    when EffectiveInterestRate.effectiveInterestRate paymentStream is
+        Ok interestRate ->
+            Num.absDiff interestRate 0.0191 < 1e-3
+
+        Err _ ->
+            Bool.false
 
 almostEqual : F64, F64 -> Bool
 almostEqual = \a, b ->
