@@ -16,5 +16,4 @@ repository.
 This project includes code ported from the Date package by Justin
 Mimbs, which is licensed under the BSD 3-Clause License. The original
 license can be found in the LICENSE file of the
-[Date](https://github.com/justinmimbs/date) repository, and in the
-licenses directory of the current project.
+[Date](https://github.com/justinmimbs/date) repository.
